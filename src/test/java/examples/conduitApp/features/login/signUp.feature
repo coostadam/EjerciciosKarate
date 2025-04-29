@@ -1,3 +1,4 @@
+@smokeTest
 @ignore
 Feature: Registro como usuario en la aplicación
 

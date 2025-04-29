@@ -1,3 +1,5 @@
+# Notas: Añadir el tag @smokeTest a nivel de feature para ejecutar todos los escenarios de la feature.
+@smokeTest
 
 Feature: Tratar artículos.
 
@@ -8,12 +10,13 @@ Feature: Tratar artículos.
     * print 'Token: ' + token
     * def articleSlug = ''
 
+  @wip
   Scenario: Obtener todos los artículos disponibles
     When method GET
     Then status 200
     * print response.articles
 
-    @wip
+
   Scenario: Publicar un artículo
     * def jsonArticle =
         """
