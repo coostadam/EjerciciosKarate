@@ -1,4 +1,4 @@
-# EjerciciosKarate
+# Ejercicios Karate
 ## Escenario 1
 1. Haz una petición para crear un usuario.
 2. Almacena el token de autorización para poder llevar a cabo el resto de solicitudes.
