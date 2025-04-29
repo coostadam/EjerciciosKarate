@@ -1,7 +1,11 @@
 # Notas: Añadir el tag @smokeTest a nivel de feature para ejecutar todos los escenarios de la feature.
 @smokeTest
 
+# Nota: La descripción de la feature podría ser más específica, como por ejemplo "Gestión de artículos en la aplicación Conduit".
 Feature: Tratar artículos.
+
+  # Nota: No es obligatorio definir la descripción del Background pero es recomendable para entender el contexto de la prueba.
+  # Por ejemplo, "Definir la URL base y obtener el token de acceso".
 
   Background:
     Given url apiUrl + 'articles'
@@ -36,6 +40,7 @@ Feature: Tratar artículos.
         # And match response.article.title == 'Artículo principal de prueba 6'
     * karate.set('articleSlug', response.article.slug)
 
+# Nota: el nombre del Scenario podría ser, Obtener todos los artículos disponibles del usuario autenticado ó logado.
   Scenario: Obtener todos los artículos disponibles de mi usuario
     And header Authorization = token
     When method GET
