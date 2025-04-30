@@ -1,9 +1,10 @@
 @smokeTest
 @wip
+  # Must be ignored because it is only obligatory to test the login feature
 Feature: User Registration
 
   Background: Set base URL and initialize data generator
-    Given url apiUrl + 'users'
+    Given url apiUrl
     * def DataGenerator = Java.type('examples.conduitApp.helpers.DataGenerator')
 
   Scenario: Successfully register a new user
@@ -19,10 +20,10 @@ Feature: User Registration
       }
     }
     """
+    Given path 'users'
     And request jsonUser
     When method POST
     Then status 201
     And response.user.username == username
-    * print response.user
 
 

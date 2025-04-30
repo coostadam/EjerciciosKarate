@@ -1,83 +1,41 @@
-# Notas: Añadir el tag @smokeTest a nivel de feature para ejecutar todos los escenarios de la feature.
 @smokeTest
+@wip
 
-# Nota: La descripción de la feature podría ser más específica, como por ejemplo "Gestión de artículos en la aplicación Conduit".
-Feature: Tratar artículos.
+Feature: Manage articles.
 
-  # Nota: No es obligatorio definir la descripción del Background pero es recomendable para entender el contexto de la prueba.
-  # Por ejemplo, "Definir la URL base y obtener el token de acceso".
-
-  Background:
+  Background: Set base URL, initialize data generator, and get access token
     Given url apiUrl + 'articles'
-    * def getTokenResponse = callonce read('classpath:examples/conduitApp/helpers/getAcessToken.feature')
-    * def token = getTokenResponse.token
-    * print 'Token: ' + token
-    * def articleSlug = ''
+    * def DataGenerator = Java.type('examples.conduitApp.helpers.DataGenerator')
 
-  @wip
-  Scenario: Obtener todos los artículos disponibles
+  Scenario: Get all articles, create a new article, and check its creation
     When method GET
     Then status 200
     * print response.articles
 
+    * def newArticle = DataGenerator.getRandomArticleValues()
 
-  Scenario: Publicar un artículo
-    * def jsonArticle =
-        """
-    {
-      "article": {
-        "title": "Prueba 3",
-        "description": "sssss.",
-        "body": "Aquí puedes incluir el contenido principal del documento."
-      }
-    }
-    """
-    And header Authorization = token
-    And request jsonArticle
+    And request { article: #(newArticle) }
     When method POST
     Then status 201
-    * print response.article
-        # And match response.article.title == 'Artículo principal de prueba 6'
-    * karate.set('articleSlug', response.article.slug)
+    And response.article.title == newArticle.title
+    * def createdArticle = response.article
+    * def slugId = createdArticle.slug
 
-# Nota: el nombre del Scenario podría ser, Obtener todos los artículos disponibles del usuario autenticado ó logado.
-  Scenario: Obtener todos los artículos disponibles de mi usuario
-    And header Authorization = token
     When method GET
     Then status 200
     * print response.articles
 
-  Scenario: Editar artículo creado
-    * def articleSlug = karate.get('articleSlug')
-    Given url apiUrl + 'articles/' + articleSlug
-    * def jsonArticle =
-            """
-    {
-      "article": {
-        "title": "Prueba 1 edit",
-        "description": "Esto es un articulo de conduit editado.",
-        "body": "Aquí puedes incluir el contenido principal del documento editado."
-      }
-    }
-    """
-    And header Authorization = token
-    And request jsonArticle
+  Scenario: Update the article generated
+    When method GET
+    Then status 200
+    * def articles = response.articles
+    * def articleToUpdate = articles[0]
+    * def updatedArticle = DataGenerator.getRandomArticleValues()
+
+    Given path '/', articleToUpdate.slug
+    And request { article: #(updatedArticle) }
     When method PUT
     Then status 200
-    And response.article.title == 'Prueba 1 edit'
-    And response.article.description == 'Esto es un articulo de conduit editado.'
-    * print response.article
-    * karate.set('articleSlug', response.article.slug)
+    And response.article.title == updatedArticle.title
 
-  Scenario: Delete artículo
-    * def articleSlug = karate.get('articleSlug')
-    Given url apiUrl + 'articles/' + articleSlug
-    And header Authorization = token
-    When method DELETE
-    Then status 204
 
-  Scenario: Obtener todos los artículos disponibles de mi usuario
-    And header Authorization = token
-    When method GET
-    Then status 200
-    * print response.articles
